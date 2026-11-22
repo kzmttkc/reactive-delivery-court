@@ -19,7 +19,7 @@ import { createSeller, OUTPUT_SCHEMAS } from "./seller.mjs";
 import { createBuyer } from "./buyer.mjs";
 import { createJudge } from "./judge.mjs";
 import { loadJudge } from "./content.mjs";
-import { payerSigned, perMinuteLimit } from "./judge-auth.mjs";
+import { payerSigned, perMinuteLimit, signedBy } from "./judge-auth.mjs";
 
 const PORT = Number(process.env.PORT || 8080);
 const DATA = process.env.DATA_DIR || join(REPO, "offchain", "runs", "public");
@@ -41,6 +41,7 @@ const DEPOSITED = parseAbiItem("event Deposited(bytes32 indexed paymentId, addre
 const RESOLVED = parseAbiItem("event Resolved(bytes32 indexed paymentId, bool captured, uint256 amount, uint8 score, uint8 reason)");
 const PAYMENT_OPENED = parseAbiItem("event PaymentOpened(bytes32 indexed paymentId, uint48 deadline)");
 const VREQ = parseAbiItem("event ValidationRequest(address indexed validatorAddress, uint256 indexed agentId, string requestURI, bytes32 indexed requestHash)");
+const SELLERS_OF = [parseAbiItem("function sellers(address) view returns (bool registered, uint256 agentId)")];
 const DECISION = parseAbiItem("event Decision(bytes32 indexed paymentId, bool capture, uint8 score, uint8 reason)");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const json = (v) => JSON.stringify(v, (_k, x) => (typeof x === "bigint" ? x.toString() : x), 2);
@@ -280,7 +281,7 @@ async function main() {
   // One judgment per payment. The record says the buyer reported the body.
   app.post("/judge", async (req, res) => {
     if (!judgeLimit(req.get("fly-client-ip") ?? req.socket.remoteAddress ?? "unknown")) return res.status(429).json({ error: "at most 5 /judge calls a minute per caller" });
-    const { authorizeTx, status, bodyBase64 = "", latencyMs = 1000, signature } = req.body ?? {};
+    const { authorizeTx, status, bodyBase64 = "", latencyMs = 1000, signature, sellerSignature } = req.body ?? {};
     if (!/^0x[0-9a-fA-F]{64}$/.test(String(authorizeTx))) return res.status(400).json({ error: "authorizeTx must be a 32-byte tx hash" });
     if (!Number.isInteger(status) || status < 100 || status > 599) return res.status(400).json({ error: "status must be the HTTP status the buyer received" });
     let body;
@@ -291,8 +292,18 @@ async function main() {
       .map((l) => { try { return decodeEventLog({ abi: [DEPOSITED], data: l.data, topics: l.topics }); } catch { return null; } })
       .find((d) => d?.eventName === "Deposited");
     if (!dep) return res.status(400).json({ error: "that tx has no Deposited event from the court" });
-    const kind = KINDS.find((k) => ROLES[`seller-${k}`].toLowerCase() === dep.args.receiver.toLowerCase());
-    if (!kind) return res.status(400).json({ error: "that payment is not to one of this server's sellers" });
+    let kind = KINDS.find((k) => ROLES[`seller-${k}`].toLowerCase() === dep.args.receiver.toLowerCase());
+    if (!kind) {
+      // Any seller the court's owner registered on the callback can be judged here (docs/SELLER.md).
+      // The court has no copy of an outside seller's bytes, so the seller signs them too: neither side can report alone.
+      let registered = false;
+      try { [registered] = await base.readContract({ address: CALLBACK, abi: SELLERS_OF, functionName: "sellers", args: [dep.args.receiver] }); } catch { /* unreadable counts as not registered */ }
+      if (!registered) return res.status(400).json({ error: "that payment is not to a seller registered on the court" });
+      if (!(await signedBy({ signer: dep.args.receiver, paymentId: dep.args.paymentId, body, status, signature: sellerSignature }))) {
+        return res.status(401).json({ error: "an outside seller's body needs sellerSignature: the seller's EIP-191 signature over delivery-court:judge:<paymentId>:0x<sha256(body)>:<status>" });
+      }
+      kind = "external";
+    }
     const paymentId = dep.args.paymentId;
     if (dep.args.payer.toLowerCase() === ROLES.buyer.toLowerCase()) return res.status(409).json({ error: "this payment was made by the server's own buyer and is judged by the server" });
     if (judged.has(paymentId) || existsSync(join(DATA, "responses", `${paymentId}.json`))) return res.status(409).json({ error: "already judged" });

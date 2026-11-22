@@ -320,3 +320,16 @@ test("/judge refuses a body or status that differs from what the seller sent (re
   assert.ok(cmp > 0 && cmp < sig, "compared before anything is judged");
   assert.ok(src.includes('req.get("fly-client-ip")'), "the per-caller limit keys on Fly-Client-IP, not X-Forwarded-For");
 });
+
+test("an outside seller registered on the court can be judged, only with its own signature over the bytes (rescore 2026-11-22)", async () => {
+  const src = readFileSync(new URL("../src/server.mjs", import.meta.url), "utf8");
+  assert.ok(src.includes('functionName: "sellers", args: [dep.args.receiver]'), "registration is read from the callback");
+  assert.ok(src.includes("signedBy({ signer: dep.args.receiver"), "the seller's signature is required");
+  const seller = pkToAccount("0x" + "33".repeat(32));
+  const paymentId = "0x" + "ef".repeat(32);
+  const body = Buffer.from('{"answer":42}');
+  const sellerSignature = await seller.signMessage({ message: judgeMessage(paymentId, body, 200) });
+  const { signedBy } = await import("../src/judge-auth.mjs");
+  assert.equal(await signedBy({ signer: seller.address, paymentId, body, status: 200, signature: sellerSignature }), true);
+  assert.equal(await signedBy({ signer: seller.address, paymentId, body: Buffer.alloc(0), status: 200, signature: sellerSignature }), false);
+});

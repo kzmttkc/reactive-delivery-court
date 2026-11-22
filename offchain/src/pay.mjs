@@ -28,6 +28,8 @@ const res = await fetch(`${origin}/judge`, {
     authorizeTx, status: bought.response.status, bodyBase64: bought.response.body.toString("base64"), latencyMs: bought.response.latencyMs,
     // Only the payer may report what arrived: sign the exact bytes with the paying key.
     signature: await account.signMessage({ message: judgeMessage(bought.paymentId, bought.response.body, bought.response.status) }),
+    // An outside seller signs the same line over what it sent and returns it in this header (docs/SELLER.md).
+    ...(bought.response.headers["x-delivery-court-signature"] ? { sellerSignature: bought.response.headers["x-delivery-court-signature"] } : {}),
   }),
 });
 const j = await res.json();

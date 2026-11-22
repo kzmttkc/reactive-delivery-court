@@ -17,7 +17,7 @@ Reactive Meets AI
 
 ## Repository
 
-<TBD: public GitHub URL>
+https://github.com/kzmttkc/reactive-delivery-court
 
 ## Demo video
 
@@ -37,27 +37,26 @@ Reactive Meets AI
 ## Description
 
 <!-- DESCRIPTION START -->
-vet402, my x402 buyer service, has paid sellers 15,128 times. 1,251 of those payments, about 1 in 12, never got a confirmed delivery. Every one settled anyway, because x402 pays before anyone reads the response.
+vet402, my x402 buyer service, has paid sellers 15,128 times. 1,251 of those payments, about 1 in 12, never got a confirmed delivery. All settled anyway: x402 pays before anyone reads the response.
 
-Delivery Court makes the money wait for a verdict. The USDC goes into the official x402 auth-capture escrow. Two small neural networks read what came back. The lower score goes on chain (ERC-8004 validationResponse). A Reactive contract on Lasna reads it and calls back to Base Sepolia: 70 or more captures to the seller, below 70 voids to the buyer. No verdict by the deadline: a Reactive cron refunds the buyer. Silence and an empty body leave ERC-8004 feedback.
+The USDC goes into the official x402 auth-capture escrow. Two small neural networks read what came back. The lower score goes on chain (ERC-8004 validationResponse). A Reactive contract on Lasna reads it and calls back to Base Sepolia: 70 or more captures to the seller, below 70 voids to the buyer. No verdict by the deadline: a Reactive cron refunds the buyer. Silence and an empty body leave ERC-8004 feedback.
 
 ### A 200 is not a delivery
 
-The metadata network gives 100 to an error JSON, an HTML 502 page, JSON cut after 60 bytes and `{"ok":true}` against the declared schema. The content network gives each 0. Held-out test, 822 real bodies from 225 hosts not seen in training: accuracy 0.985. A "non-empty JSON" rule: 0.866.
+The metadata network gives 100 to an error JSON, an HTML 502 page, JSON cut after 60 bytes and `{"ok":true}` against the declared schema. The content network gives each 0. Held-out test, 822 real bodies from 225 unseen hosts (657 are sellers' declared examples): accuracy 0.985. A "non-empty JSON" rule: 0.866.
 
 ### What only Reactive does here
 
-1. The judge never touches money. It writes a standard ERC-8004 validationResponse, holds no operator role, and its capture call reverts with NotAuthorized. Reactive turns the registry entry into a payment decision.
-2. Nobody has to show up. Reactive joins the unmodified x402 escrow, the ERC-8004 registry and a timer. A permissionless settle() still needs someone awake with gas, and a silent seller writes nothing. The cron refunded that buyer 116 s after payment.
-3. The judge can lower a score, never raise it. Reactive re-scores the committed facts and keeps the lower one. An empty body is 0 by its hash: the judge key wrote 99 for one, Reactive made it 0 and refunded.
-Don't trust the judge: `node src/rejudge.mjs <score tx>` re-runs both networks on the public body and prints match.
+1. The judge never touches money. It only writes an ERC-8004 score, and its capture call reverts with NotAuthorized. Reactive turns the registry entry into a payment decision.
+2. Nobody has to show up. A permissionless settle() still needs someone awake with gas, and a silent seller writes nothing. The cron refunded that buyer 116 s after payment.
+3. Reactive re-scores the facts the judge commits (status, size, latency, body hash) and keeps the lower score, so the judge cannot score above its own facts. An empty body is 0 by its hash: the judge wrote 99 for one, Reactive made it 0 and refunded. False facts fail `node src/rejudge.mjs <score tx>`, which re-runs both networks on the public body.
 
 ### Judging criteria
 
 1. Execution: three cases with origin, react and callback tx. Live: https://delivery-court.fly.dev, one click, every tx linked.
 2. Integration: above. Without Reactive the score moves no money.
-3. Usefulness: refunds for non-delivery with no bot or person holding the money. The body a buyer reports must match the seller's copy. Next, vet402 adds it to its x402 facilitator: checks a seller before you pay, refunds you after.
-4. Craft: 123 Foundry tests (fuzzing, reentrancy, fork run), 25 off-chain tests with Python/JS model parity.
+3. Usefulness: refunds for non-delivery with no bot or person holding the money. Any registered x402 seller can join with one line (docs/SELLER.md). Next, vet402 adds it to its x402 facilitator: checks a seller before you pay, refunds you after.
+4. Craft: 123 Foundry tests (fuzzing, reentrancy, fork run), 26 off-chain tests with Python/JS model parity.
 
 Data: vet402 public record, in production, Aug 23 to Nov 21, snapshot in the repo.
 <!-- DESCRIPTION END -->

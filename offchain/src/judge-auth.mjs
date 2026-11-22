@@ -7,6 +7,11 @@ import { verifyMessage } from "viem";
 export const judgeMessage = (paymentId, body, status) =>
   `delivery-court:judge:${String(paymentId).toLowerCase()}:0x${createHash("sha256").update(body).digest("hex")}:${status}`;
 
+/** true only when `signature` is `signer`'s signature over judgeMessage(paymentId, body, status). */
+export async function signedBy({ signer, paymentId, body, status, signature }) {
+  return payerSigned({ payer: signer, paymentId, body, status, signature });
+}
+
 /** true only when `signature` is the payer's signature over judgeMessage(paymentId, body, status). */
 export async function payerSigned({ payer, paymentId, body, status, signature }) {
   if (!/^0x[0-9a-fA-F]{130}$/.test(String(signature ?? ""))) return false;

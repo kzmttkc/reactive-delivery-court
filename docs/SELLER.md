@@ -42,9 +42,13 @@ computes on chain from the facts the judge commits (body hash and the tag
 to the payer, and the void is recorded as ERC-8004 feedback against your agent.
 A low score is refunded without feedback.
 
-What the payer does after the response: sign
-`delivery-court:judge:v1 / paymentId / bodySha256 / status` with the paying
-wallet and POST it with the bytes to `/judge` (see `offchain/src/pay.mjs`).
+What happens after the response:
+
+1. Your server signs what it sent, with the key of `payTo`, and returns it in the response header `x-delivery-court-signature`. The signed line (EIP-191 personal_sign) is
+   `delivery-court:judge:<paymentId lowercase>:0x<sha256 of the exact body bytes>:<HTTP status>`
+   (`offchain/src/judge-auth.mjs`, `judgeMessage`).
+2. Your server files `validationRequest(judge, yourAgentId, <any URI>, paymentId)` on the ERC-8004 ValidationRegistry, naming the court's judge `0x5eC4599A438fA0559aDe8b8551b369D5c5aDF0bC`. The judge scores only payments that have this request.
+3. The payer posts the authorize tx, the status, the exact bytes, its own signature over the same line and your `sellerSignature` to `https://delivery-court.fly.dev/judge` (`offchain/src/pay.mjs` does all of it and forwards your header). The court refuses the post unless both signatures match the same bytes, so neither side can report alone.
 
 Not confirmed yet: which public facilitators settle `auth-capture` with a
 custom operator. The demo uses its own facilitator on 127.0.0.1.

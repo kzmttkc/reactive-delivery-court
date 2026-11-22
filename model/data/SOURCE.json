@@ -1,0 +1,16 @@
+{
+  "url": "https://vet402.com/api/v1/observatory/delivery.csv",
+  "fetched_at": "2026-11-21T12:22:05Z",
+  "rows": 15128,
+  "sha256_of_kept_csv": "ebef8a496e4cfb79306a9488cd24ac45b36fa4764a6e653921a7c51fa71bb79b",
+  "columns": [
+    "purchase_id",
+    "attempted_at",
+    "latency_ms",
+    "delivery",
+    "delivery_reason",
+    "http_status_paid",
+    "body_bytes",
+    "payload_non_empty"
+  ]
+}

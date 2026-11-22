@@ -1,0 +1,34 @@
+# Public demo server. Testnet keys come from the ROLE_KEYS_JSON secret (buyer, seller-deliver,
+# seller-empty, judge, relayer only, never the deployer).
+# Always on through judging and results (owner approved on 2026-11-22, extended to 2026-12-31 the same day). Stop on 2027-01-01: `flyctl scale count 0 -a delivery-court`.
+app = "delivery-court"
+primary_region = "nrt"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PUBLIC_URL = "https://delivery-court.fly.dev"
+  DAILY_CAP = "40"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "off"
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    grace_period = "20s"
+    interval = "60s"
+    method = "GET"
+    path = "/ping"
+    timeout = "15s"
+
+[mounts]
+  source = "court_data"
+  destination = "/data"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

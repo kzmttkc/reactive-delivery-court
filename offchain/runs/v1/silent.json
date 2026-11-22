@@ -1,0 +1,49 @@
+{
+  "scene": "silent",
+  "run": "silent",
+  "startedAt": "2026-11-21T12:57:51.167Z",
+  "modelSha256": "71d5a10978ed1106eceae249f3361f7018b718868fc3448881910ff454d90250",
+  "paymentId": "0x4ae39af1a2e01ce53c857b4ba7b47c009de1585a7ab2b365af4078d5cc8a2589",
+  "before": {
+    "buyerUsdc": "1980000",
+    "sellerUsdc": "0",
+    "escrowStoreUsdc": "0",
+    "tokenStore": "0x9CCF603e34eF2E56129644175033651A6aE4C930"
+  },
+  "response": null,
+  "buyerError": "no response within 20000 ms",
+  "authorizeTx": "0xf1b759d8353e42bbe2140324e41d3b7655d3ff2701b647ebb45744e070e11cf0",
+  "authorizeBlock": "61719922",
+  "facilitatorSettle": [
+    "0xf1b759d8353e42bbe2140324e41d3b7655d3ff2701b647ebb45744e070e11cf0"
+  ],
+  "whileHeld": {
+    "buyerUsdc": "1970000",
+    "sellerUsdc": "0",
+    "escrowStoreUsdc": "10000",
+    "tokenStore": "0x9CCF603e34eF2E56129644175033651A6aE4C930"
+  },
+  "depositedReactTx": "0x53daf7bb88d8f598249ac8d7fd878132164d1444025bbb0ee74aba6a4dca8dcd",
+  "decisionReactTx": "0x82d02b5d97dc5e4608da01a8b0d997a5a94b4d62fbe51800ea2d0056564f9cd1",
+  "decision": {
+    "capture": false,
+    "score": 0,
+    "reason": 2
+  },
+  "callbackTx": "0xa1f7b08944a74c754e62a38fdbbce8f5bdfab72057bfaa5d866ecb5f43f638fc",
+  "callbackBlock": "61720348",
+  "resolved": {
+    "captured": false,
+    "amount": "10000",
+    "score": 0,
+    "reason": 2
+  },
+  "feedbackGiven": false,
+  "after": {
+    "buyerUsdc": "1980000",
+    "sellerUsdc": "0",
+    "escrowStoreUsdc": "0",
+    "tokenStore": "0x9CCF603e34eF2E56129644175033651A6aE4C930"
+  },
+  "finishedAt": "2026-11-21T12:59:13.219Z"
+}

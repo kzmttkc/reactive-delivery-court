@@ -1,0 +1,74 @@
+{
+  "v": 3,
+  "model": "sha256:71d5a10978ed1106eceae249f3361f7018b718868fc3448881910ff454d90250",
+  "metadataModel": "sha256:efaddc9688c6099dc6b3061c422dc500596bf2812e4de6b725bb71a55958945d",
+  "contentModel": "sha256:ee63a99dfdba1770734a5a9f79a9eefad4777a9558d500b7257e0c8cf3d633e5",
+  "rule": "score = min(metadata score, content score), metadata score alone when there is no response",
+  "paymentId": "0x790585361e94c7b27b43594ab39b9dfe57fc53da38497416419a1763d3143193",
+  "status": 200,
+  "bodyBytes": 0,
+  "latencyMs": 2149,
+  "tag": "dc1:200:0:2149",
+  "bodySha256": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "bodyFile": "offchain/runs/responses/0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.body",
+  "outputSchemaDeclared": {
+    "type": "object",
+    "required": [
+      "network",
+      "blockNumber",
+      "blockTimestamp"
+    ],
+    "properties": {
+      "network": {
+        "type": "string"
+      },
+      "blockNumber": {
+        "type": "string"
+      },
+      "blockTimestamp": {
+        "type": "integer"
+      }
+    }
+  },
+  "score": 0,
+  "metadata": {
+    "score": 3,
+    "p": 0.031778,
+    "features": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0.767322
+    ]
+  },
+  "content": {
+    "score": 0,
+    "p": 0.000039,
+    "features": [
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

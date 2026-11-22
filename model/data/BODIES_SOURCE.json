@@ -1,0 +1,23 @@
+{
+  "discovery_url": "https://api.cdp.coinbase.com/platform/v2/x402/discovery/resources",
+  "fetched_at": "2026-11-21T12:47:18Z",
+  "discovery_items": 4000,
+  "probe_hosts": 400,
+  "records": 4372,
+  "by_source": {
+    "bazaar_example": 3589,
+    "unpaid_402": 387,
+    "error_page_404": 378,
+    "unpaid_400": 4,
+    "unpaid_404": 3,
+    "error_page_402": 3,
+    "error_page_403": 2,
+    "unpaid_502": 1,
+    "error_page_502": 1,
+    "unpaid_410": 1,
+    "unpaid_308": 1,
+    "unpaid_200": 1,
+    "error_page_401": 1
+  },
+  "sha256_of_jsonl": "20f3c0e8ad2d12c9d6447b6c14128bb3dd15d7cd7fc29f30af183676c2c77128"
+}

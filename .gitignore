@@ -1,0 +1,17 @@
+out/
+cache/
+broadcast/
+.env
+.env.*
+# keys never live in this repo
+*.key
+*.pem
+keys/
+.vet402-keys/
+*-testnet.json
+*keystore*
+stage0/
+node_modules/
+offchain/runs/*.tmp
+__pycache__/
+offchain/runs/public/

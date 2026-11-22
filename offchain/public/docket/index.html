@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src https://sepolia.base.org https://lasna-rpc.rnk.dev; img-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<title>Delivery Court docket</title>
+<link rel="stylesheet" href="docket.css">
+</head>
+<body>
+<header>
+  <a class="back" href="/">← Live demo</a>
+  <h1>Court docket</h1>
+  <p class="lede">Every case Delivery Court opened and decided, rebuilt in your browser from the public RPCs. Nothing on this page comes from the court's server.</p>
+  <nav class="window" aria-label="Time window"><a data-hours="6" href="?hours=6">6 h</a><a data-hours="24" href="?hours=24">24 h</a><a data-hours="168" href="?hours=168">7 days</a></nav>
+</header>
+
+<section class="summary" aria-label="Summary">
+  <dl>
+    <div><dt>Cases, <span id="window"></span></dt><dd id="count">…</dd></div>
+    <div class="ok"><dt>Paid to the seller</dt><dd id="paid">…</dd></div>
+    <div class="ng"><dt>Refunded</dt><dd id="refunded">…</dd></div>
+    <div class="ng"><dt>of them by the Reactive cron</dt><dd id="cron">…</dd></div>
+    <div><dt>Median pay → capture</dt><dd id="median">…</dd></div>
+  </dl>
+  <p class="external"><strong id="external">…</strong> <span>cases paid from a wallet other than the court's own buyer (<code id="buyer"></code>), read from <code>Deposited.payer</code> on Base Sepolia. <span id="external-note" class="mut"></span></span></p>
+</section>
+
+<p id="status" class="mut" role="status">Loading…</p>
+<progress id="progress" max="1" value="0"></progress>
+
+<table>
+  <thead><tr><th>Opened</th><th>Case (paymentId)</th><th>Verdict</th><th class="num">Seconds</th><th>Payer</th><th>Transactions</th></tr></thead>
+  <tbody id="rows"></tbody>
+</table>
+
+<footer class="mut">
+  <p>Testnets only: Base Sepolia and Reactive Lasna. Contracts: DeliveryCourtReactive 0x9BB1…Ccb5 (Lasna), DeliveryCourtCallback 0xD877…F0DB (Base Sepolia).</p>
+  <p>Check any score yourself: <code>cd offchain &amp;&amp; node src/rejudge.mjs &lt;score tx&gt;</code></p>
+</footer>
+<script type="module" src="docket.js"></script>
+</body>
+</html>

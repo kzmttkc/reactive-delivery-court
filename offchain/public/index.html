@@ -1,0 +1,297 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Delivery Court live demo</title>
+<meta name="description" content="Pay a seller over x402. If nothing usable arrives, Reactive Network refunds the buyer. Live on Base Sepolia and Reactive Lasna.">
+<style>
+:root{
+  --bg:#f7f7f5;--surface:#fff;--fg:#141414;--mut:#5c5c58;--line:#e2e2dd;--soft:#efefeb;
+  --ok:#0b6b3a;--okbg:#e5f3ea;--ng:#a3261b;--ngbg:#fbe9e6;--wait:#7a5200;--waitbg:#fbf2d9;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f0f0e;--surface:#181817;--fg:#ededea;--mut:#a3a39d;--line:#2c2c29;--soft:#222220;
+  --ok:#7fd6a2;--okbg:#10261a;--ng:#f2a097;--ngbg:#2c1513;--wait:#f0c674;--waitbg:#2a2310;
+}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.55;max-width:860px;margin:0 auto;padding:0 16px 56px;color:var(--fg);background:var(--bg)}
+::selection{background:var(--fg);color:var(--bg)}
+a{color:inherit;text-underline-offset:.18em;text-decoration-thickness:1px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--fg);outline-offset:2px;border-radius:6px}
+code,pre{font-family:var(--mono);font-size:.84em}
+.mut{color:var(--mut)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 0;font-size:.9rem;flex-wrap:wrap}
+.bar b{font-weight:650;letter-spacing:-.01em}
+.bar nav{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--mut);margin-right:6px;vertical-align:1px}
+.dot.ok{background:var(--ok)}.dot.ng{background:var(--ng)}.dot.wait{background:var(--wait)}
+h1{font-size:clamp(2rem,6vw,3.1rem);line-height:1.08;letter-spacing:-.03em;margin:28px 0 14px;text-wrap:balance;max-width:20ch}
+.lede{font-size:1.06rem;max-width:62ch;margin:0 0 28px;color:var(--mut)}
+.lede strong{color:var(--fg);font-weight:600}
+h2{font-size:1.05rem;letter-spacing:-.01em;margin:0 0 4px}
+
+/* three scenes */
+.scenes{border:1px solid var(--line);border-radius:16px;background:var(--surface);overflow:hidden}
+.scene{display:grid;grid-template-columns:9.5rem 1fr auto;gap:12px;align-items:center;padding:14px 18px;border-top:1px solid var(--line)}
+.scene:first-child{border-top:0}
+.scene h3{font-size:.95rem;margin:0;font-weight:600}
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0;padding:0;list-style:none}
+.flow li{display:flex;align-items:center;gap:6px}
+.flow li+li::before{content:"";width:18px;height:10px;background:var(--mut);-webkit-mask:var(--arrow) center/contain no-repeat;mask:var(--arrow) center/contain no-repeat}
+:root{--arrow:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 10'%3E%3Cpath d='M0 5h15M11 1l4 4-4 4' fill='none' stroke='black' stroke-width='1.6'/%3E%3C/svg%3E")}
+.chip{font-family:var(--mono);font-size:.8rem;padding:3px 9px;border-radius:999px;background:var(--soft);white-space:nowrap}
+.end{font-size:.86rem;font-weight:650;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.end.ok{color:var(--ok);background:var(--okbg)}.end.ng{color:var(--ng);background:var(--ngbg)}
+.scene .ex{font-size:.82rem;color:var(--mut);white-space:nowrap}
+.cap{font-size:.86rem;color:var(--mut);margin:10px 2px 0}
+
+/* run */
+.try{margin-top:40px}
+.buttons{display:grid;grid-template-columns:1.25fr 1fr;gap:10px;margin:14px 0 8px}
+button{font:inherit;cursor:pointer}
+.go{font-size:1.02rem;font-weight:650;padding:16px 18px;border-radius:12px;border:1px solid var(--fg);background:var(--fg);color:var(--bg);text-align:left;transition:transform .15s ease-out,opacity .15s}
+.go small{display:block;font-weight:450;font-size:.8rem;opacity:.75;margin-top:2px}
+.go.alt{background:var(--surface);color:var(--fg);border-color:var(--line)}
+.go:hover:not(:disabled){transform:translateY(-1px)}
+.go:active:not(:disabled){transform:none}
+.go:disabled{opacity:.45;cursor:default}
+.hint{font-size:.86rem;color:var(--mut);margin:6px 2px 0}
+.run{margin-top:22px;border:1px solid var(--line);border-radius:16px;background:var(--surface);padding:18px}
+.run[hidden],#after[hidden],.result[hidden]{display:none}
+.result{border-radius:12px;padding:18px 18px 16px;margin:0 0 16px}
+.result.ok{background:var(--okbg);color:var(--ok)}.result.ng{background:var(--ngbg);color:var(--ng)}
+.result .verdict{font-size:clamp(1.6rem,5vw,2.2rem);font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.result .secs{font-size:1.05rem;margin-top:6px}
+.result .secs b{font-size:1.6rem;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.result .sub{font-size:.86rem;opacity:.85;margin-top:4px}
+#status{font-weight:600;margin:0 0 10px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+#status.ng{color:var(--ng)}#status.wait{color:var(--wait)}
+#elapsed{font-variant-numeric:tabular-nums;font-weight:450;color:var(--mut)}
+.steps{list-style:none;margin:0;padding:0}
+.steps li{position:relative;display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:8px 0 8px 26px}
+.steps li::before{content:"";position:absolute;left:5px;top:15px;width:10px;height:10px;border-radius:50%;border:2px solid var(--line);background:var(--surface)}
+.steps li::after{content:"";position:absolute;left:10px;top:27px;bottom:-9px;width:2px;background:var(--line)}
+.steps li:last-child::after{display:none}
+.steps li.done::before{background:var(--fg);border-color:var(--fg)}
+.steps li.done::after{background:var(--fg)}
+.steps li.now::before{border-color:var(--wait);animation:pulse 1.4s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--wait) 45%,transparent)}100%{box-shadow:0 0 0 8px transparent}}
+.steps .lbl{font-weight:550}
+.steps .chain{font-size:.75rem;color:var(--mut);margin-left:6px;font-weight:450}
+.steps .t{font-variant-numeric:tabular-nums;font-weight:650;text-align:right}
+.steps .meta{grid-column:1/-1;font-size:.8rem;color:var(--mut);font-family:var(--mono);overflow-wrap:anywhere}
+.steps li:not(.done) .lbl{color:var(--mut);font-weight:450}
+#after{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);display:grid;gap:10px}
+.cmd{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg)}
+.cmd code{flex:1;padding:9px 12px;overflow-wrap:anywhere;font-size:.8rem}
+.cmd button{border:0;border-left:1px solid var(--line);background:var(--surface);color:var(--fg);padding:0 14px;font-size:.82rem;font-weight:600}
+.links{display:flex;gap:18px;flex-wrap:wrap;font-size:.92rem}
+
+/* check */
+.check{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.check>div{border:1px solid var(--line);border-radius:16px;padding:16px 18px;background:var(--surface)}
+.check p{margin:4px 0 10px;font-size:.92rem;color:var(--mut)}
+.check a.big{font-weight:650;text-decoration:none}
+.check a.big:hover{text-decoration:underline}
+details{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+details:first-of-type{margin-top:36px}
+summary{cursor:pointer;font-weight:600}
+details p{font-size:.94rem}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--soft);padding:10px 12px;border-radius:10px;margin:8px 0}
+footer{margin-top:36px;font-size:.84rem;color:var(--mut)}
+
+@media (max-width:640px){
+  body{font-size:16px}
+  .scene{grid-template-columns:1fr;gap:6px;padding:14px 16px}
+  .buttons,.check{grid-template-columns:1fr}
+  .run{padding:14px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div class="bar">
+  <b>Delivery Court</b>
+  <nav><span id="srv" class="mut"><span class="dot"></span>Checking the server…</span><a href="/docket/">Docket</a></nav>
+</div>
+
+<h1>Pay first. If it never arrives, Reactive refunds you.</h1>
+<p class="lede">An x402 payment waits in escrow on Base Sepolia. A model scores what the seller sent, and a <strong>Reactive contract on Lasna pays the seller or returns the money</strong>. If the seller says nothing, a Reactive cron refunds the buyer at the deadline, with nobody online.</p>
+
+<section aria-labelledby="scenes-h">
+  <h2 id="scenes-h" class="sr">Three ways a case ends</h2>
+  <div class="scenes">
+    <div class="scene"><h3>Seller delivers</h3><ol class="flow"><li><span class="chip">200 + JSON</span></li><li><span class="chip">score 99</span></li><li><span class="end ok">Paid to the seller</span></li></ol><a class="ex" target="_blank" rel="noopener" href="https://sepolia.basescan.org/tx/0xb796e6e75349997d876a5c76353f4d003dde1b64637e88861b4314d283fbd465">example tx ↗</a></div>
+    <div class="scene"><h3>Empty answer</h3><ol class="flow"><li><span class="chip">200, 0 bytes</span></li><li><span class="chip">score 0</span></li><li><span class="end ng">Refunded</span></li></ol><a class="ex" target="_blank" rel="noopener" href="https://sepolia.basescan.org/tx/0xfc6d9aad7a91fa2d62bd2780dc5b4118cb05c86a17bf44c4d93555cd7224ae42">example tx ↗</a></div>
+    <div class="scene"><h3>Silence</h3><ol class="flow"><li><span class="chip">nothing</span></li><li><span class="chip">no score by the deadline</span></li><li><span class="end ng">Cron refunds</span></li></ol><a class="ex" target="_blank" rel="noopener" href="https://sepolia.basescan.org/tx/0xe4a424d02482f26c2f2c2dbe568a7bfb7cce76ace2e8217a4d645c321f830c76">example tx ↗</a></div>
+  </div>
+  <p class="cap">Pays at a score of 70 or more. The judge key only writes the score; the contracts move the money.</p>
+</section>
+
+<section class="try" aria-labelledby="try-h">
+  <h2 id="try-h">Run a case now</h2>
+  <div class="buttons">
+    <button id="deliver" class="go">Pay a seller that delivers<small>expect: paid to the seller</small></button>
+    <button id="empty" class="go alt">Pay a seller that sends an empty answer<small>expect: refunded</small></button>
+  </div>
+  <p class="hint">This server pays 0.01 test USDC for you. Each step links to its transaction as it confirms, usually all within a minute. Base Sepolia and Reactive Lasna testnets only, no real funds.</p>
+
+  <div id="run" class="run" hidden aria-live="polite">
+    <div id="result" class="result" hidden></div>
+    <p id="status"></p>
+    <ol id="steps" class="steps"></ol>
+    <div id="after" hidden></div>
+  </div>
+</section>
+
+<section class="check" aria-label="Check it yourself">
+  <div>
+    <h2>Every case, from the chain</h2>
+    <p>The docket rebuilds the last 24 h of cases in your browser from public RPCs. Nothing comes from this server.</p>
+    <a class="big" href="/docket/">Open the docket →</a>
+  </div>
+  <div>
+    <h2>Don't trust the judge</h2>
+    <p>Re-run any on-chain score from its public record and body, with the repository's code:</p>
+    <div class="cmd"><code id="rj-generic">cd offchain &amp;&amp; node src/rejudge.mjs &lt;score tx&gt;</code></div>
+  </div>
+</section>
+
+<details><summary>Pay with your own wallet instead</summary>
+<p>Any x402 client with the <code>auth-capture</code> scheme and Base Sepolia USDC can pay:</p>
+<pre id="urls"></pre>
+<p>Then post what you received, signed with the key that paid, so the court can judge it (one judgment per payment). <code>src/pay.mjs</code> does all of this:</p>
+<pre id="post"></pre>
+<p class="mut">Without a judgment the payment returns to you after the deadline (10 minutes).</p>
+</details>
+<details><summary>Server state</summary><pre id="health">Loading...</pre></details>
+<footer>Contracts: DeliveryCourtCallback and the x402 escrow on Base Sepolia, DeliveryCourtReactive on Reactive Lasna. Scores are ERC-8004 validation responses.</footer>
+
+<script>
+const BX='https://sepolia.basescan.org/tx/',LX='https://lasna.reactscan.net/tx/';
+const RPC={base:'https://sepolia.base.org',lasna:'https://lasna-rpc.rnk.dev/'};
+const STEPS=[
+  ['authorize','x402 payment held in escrow','Base Sepolia','base'],
+  ['lasnaOpened','Reactive contract opens the case','Lasna','lasna'],
+  ['validationRequest','Seller asks for a judgment','ERC-8004, Base Sepolia','base'],
+  ['validationResponse','Model writes its score','ERC-8004, Base Sepolia','base'],
+  ['lasnaDecision','Reactive contract decides','Lasna','lasna'],
+  ['callback','Escrow pays the seller or refunds the buyer','Base Sepolia','base']];
+const TX=/^0x[0-9a-fA-F]{64}$/;
+const $=(id)=>document.getElementById(id);
+const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!=null)e.textContent=text;if(cls)e.className=cls;return e;};
+const ext=(href,text)=>{const a=el('a',text);a.href=href;a.target='_blank';a.rel='noopener';return a;};
+const short=(h)=>h.slice(0,10)+'…'+h.slice(-6);
+const utc=(ts)=>new Date(ts*1000).toISOString().slice(11,19)+' UTC';
+const st=(t,c)=>{const s=$('status');s.className=c||'';s.textContent=t;const e=el('span','','');e.id='elapsed';s.append(e);};
+const origin=location.origin;
+$('urls').textContent=origin+'/deliver/resource\n'+origin+'/empty/resource';
+$('post').textContent='curl -X POST '+origin+'/judge -H "content-type: application/json" \\\n  -d \'{"authorizeTx":"0x...","status":200,"bodyBase64":"...","signature":"0x..."}\'\n# signature: EIP-191 by the payer over delivery-court:judge:<paymentId>:0x<sha256(body)>:<status>';
+
+// Block time of each step, read from the public RPCs (best effort: the page works without it).
+const times=new Map();
+async function rpc(url,method,params){const r=await fetch(url,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params}),credentials:'omit'});const j=await r.json();if(j.error||j.result==null)throw new Error('rpc');return j.result;}
+function blockOf(chain,hash){
+  if(!times.has(hash))times.set(hash,(async()=>{
+    const rc=await rpc(RPC[chain],'eth_getTransactionReceipt',[hash]);
+    const b=await rpc(RPC[chain],'eth_getBlockByNumber',[rc.blockNumber,false]);
+    return {block:parseInt(rc.blockNumber,16),ts:parseInt(b.timestamp,16)};
+  })().catch(()=>{times.delete(hash);return null;}));
+  return times.get(hash);
+}
+
+let last=null,ticker=null,startedAt=0;
+function draw(r){
+  last=r;
+  const ol=$('steps');ol.textContent='';
+  const list=STEPS.filter(([k])=>!(r.kind==='silent'&&k==='validationRequest'));
+  let nowSet=false;
+  const t0=r.steps&&TX.test(r.steps.authorize||'')?blockOf('base',r.steps.authorize):null;
+  for(const [k,label,chain,net] of list){
+    const h=r.steps&&r.steps[k];const ok=typeof h==='string'&&TX.test(h);
+    const li=el('li');
+    const lbl=el('span',label,'lbl');lbl.append(el('span',chain,'chain'));
+    const t=el('span','','t');
+    li.append(lbl,t);
+    if(ok){
+      li.className='done';
+      const meta=el('div','','meta');meta.append(ext((net==='lasna'?LX:BX)+h,short(h)+' ↗'));li.append(meta);
+      blockOf(net,h).then(async(b)=>{if(!b)return;const a=t0&&await t0;
+        meta.prepend(document.createTextNode('block '+b.block.toLocaleString('en-US')+' · '+utc(b.ts)+' · '));
+        if(a)t.textContent=k==='authorize'?'0 s':'+'+(b.ts-a.ts)+' s';});
+    }else if(r.status==='running'&&!nowSet){li.className='now';nowSet=true;}
+    ol.append(li);
+    if(k==='validationResponse'&&r.score!=null){
+      const sc=el('li','','done');sc.append(el('span','Score '+r.score+' of 100','lbl'),el('span','','t'));
+      const m=el('div','pays at 70 or more','meta');sc.append(m);ol.append(sc);
+    }
+  }
+}
+function result(r){
+  const box=$('result');box.textContent='';
+  const paid=!!(r.resolved&&r.resolved.captured);
+  box.className='result '+(paid?'ok':'ng');
+  box.append(el('div',paid?'Paid to the seller':'Refunded to the buyer','verdict'));
+  if(r.blockSeconds!=null){const s=el('div','','secs');s.append(el('b',r.blockSeconds+' s'),document.createTextNode(' from payment to settlement'));box.append(s);}
+  const why=r.decision&&r.decision.reason===2?'No score by the deadline, so the Reactive cron refunded it.':r.score!=null?('Score '+r.score+' of 100. '+(paid?'At 70 or more the seller is paid.':'Below 70 the buyer gets the 0.01 USDC back.')):'';
+  box.append(el('div',(why+' Seconds are Base Sepolia block timestamps.').trim(),'sub'));
+  box.hidden=false;
+  const af=$('after');af.textContent='';
+  const links=el('div','','links');
+  if(typeof r.responseURI==='string'&&/^https?:\/\//.test(r.responseURI))links.append(ext(r.responseURI,'Judgment record ↗'));
+  const d=el('a','See it in the docket →');d.href='/docket/';links.append(d);
+  af.append(links);
+  const h=r.steps&&r.steps.validationResponse;
+  if(typeof h==='string'&&TX.test(h)){
+    af.append(el('div','Re-run this score yourself:','mut'));
+    const cmd=el('div','','cmd');const code=el('code','cd offchain && node src/rejudge.mjs '+h);const b=el('button','Copy');b.type='button';
+    b.onclick=async()=>{try{await navigator.clipboard.writeText(code.textContent);b.textContent='Copied';}catch{b.textContent='Select and copy';}setTimeout(()=>{b.textContent='Copy';},2000);};
+    cmd.append(code,b);af.append(cmd);
+  }
+  af.hidden=false;
+}
+function tick(){const e=$('elapsed');if(!e||!startedAt)return;const s=Math.round((Date.now()-startedAt)/1000);e.textContent=s>=0&&s<1800?s+' s elapsed':'';}
+function setBusy(b){$('deliver').disabled=$('empty').disabled=b;}
+async function poll(id){
+  $('run').hidden=false;$('result').hidden=true;$('after').hidden=true;
+  clearInterval(ticker);ticker=setInterval(tick,1000);
+  for(;;){
+    let r;
+    try{r=await fetch('/runs/'+id,{cache:'no-store'}).then(x=>x.json());}
+    catch{st('Lost contact with the server. Retrying…','wait');await new Promise(s=>setTimeout(s,3000));continue;}
+    if(r.error&&!r.status){st('Stopped: '+r.error,'ng');break;}
+    if(!startedAt&&r.startedAt)startedAt=Date.parse(r.startedAt)||Date.now();
+    draw(r);
+    if(r.status==='done'){clearInterval(ticker);st('Settled on chain.','');startedAt=0;result(r);break;}
+    if(r.status==='failed'){clearInterval(ticker);st('Stopped: '+r.error,'ng');break;}
+    st('Running. Each step appears when its transaction confirms.','wait');tick();
+    await new Promise(s=>setTimeout(s,3000));
+  }
+  clearInterval(ticker);startedAt=0;setBusy(false);
+}
+async function go(kind){
+  setBusy(true);$('run').hidden=false;$('result').hidden=true;$('after').hidden=true;$('steps').textContent='';
+  startedAt=Date.now();st('Starting…','wait');
+  let r,j={};
+  try{r=await fetch('/try/'+kind,{method:'POST'});j=await r.json().catch(()=>({}));}
+  catch{st('Could not reach the server.','ng');setBusy(false);return;}
+  if(r.status===202){history.replaceState(null,'','#'+j.run);startedAt=0;return poll(j.run);}
+  if(j.run&&/^[0-9a-f]{12}$/.test(j.run)){st(j.error,'wait');history.replaceState(null,'','#'+j.run);startedAt=0;return poll(j.run);}
+  st(j.error||('HTTP '+r.status),'ng');setBusy(false);
+}
+$('deliver').onclick=()=>go('deliver');$('empty').onclick=()=>go('empty');
+if(/^#[0-9a-f]{12}$/.test(location.hash)){setBusy(true);poll(location.hash.slice(1));}
+
+function server(h){
+  const s=$('srv');s.textContent='';const dot=el('span','','dot');s.append(dot);
+  if(!h||!h.ok){dot.classList.add('ng');s.append('Server unavailable');return;}
+  const low=Array.isArray(h.low)&&h.low.length;
+  const cap=Number.isFinite(h.dailyCap)&&Number.isFinite(h.runsToday)?' · '+h.runsToday+' of '+h.dailyCap+' runs today':'';
+  if(low){dot.classList.add('ng');s.append('Paused: low testnet balance');}
+  else if(h.busy){dot.classList.add('wait');s.append('A run is in progress'+cap);}
+  else{dot.classList.add('ok');s.append('Ready'+cap);}
+  if(h.cronPaused===true)s.append(' · cron paused');
+}
+fetch('/health').then(r=>r.json()).then(h=>{$('health').textContent=JSON.stringify(h,null,1);server(h);}).catch(e=>{$('health').textContent=String(e);server(null);});
+</script></body></html>

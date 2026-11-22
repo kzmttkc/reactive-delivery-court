@@ -1,0 +1,24 @@
+{
+  "note": "Stage 3 and 4 deployment. The reactive contract listens to the judge role as validator, so stage 3 needed a new pair (validator is immutable).",
+  "network": "eip155:84532",
+  "reactive": {
+    "chain": "Lasna (5318007)",
+    "address": "0x9BB13974e4B1e2f3C8e8855c9637a8Ee490eCcb5",
+    "validator": "0x5eC4599A438fA0559aDe8b8551b369D5c5aDF0bC",
+    "threshold": 70
+  },
+  "callback": {
+    "chain": "Base Sepolia (84532)",
+    "address": "0xD877aBeED8BaECEeB688115170228a203E39F0DB"
+  },
+  "escrow": "0xf96815976523E00e65Be8f34cA5e64b4f41EB19c",
+  "tokenCollector": "0x8612dfdc421f80336cd14E8EF9cb1E765dB5ab88",
+  "usdc": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+  "identityRegistry": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
+  "reputationRegistry": "0x8004B663056A597Dffe9eCcC1965A193B7388713",
+  "validationRegistry": "0x8004Cb1BF31DAf7788923b405b754f57acEB4272",
+  "agents": {
+    "seller-deliver": 10798,
+    "seller-empty": 10799
+  }
+}

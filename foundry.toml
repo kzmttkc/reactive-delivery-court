@@ -1,0 +1,24 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+solc_version = "0.8.30"
+evm_version = "cancun"
+optimizer = true
+optimizer_runs = 200
+fs_permissions = [{ access = "read", path = "./" }, { access = "read-write", path = "./stage0" }]
+
+remappings = [
+  "forge-std/=lib/forge-std/src/",
+  "@reactive/=lib/reactive-lib-omni/",
+  "commerce-payments/=lib/commerce-payments/src/",
+  "@openzeppelin/contracts/=lib/commerce-payments/lib/spend-permissions/lib/openzeppelin-contracts/contracts/",
+  "solady/=lib/commerce-payments/lib/solady/src/",
+]
+
+[fuzz]
+runs = 256
+
+[rpc_endpoints]
+base_sepolia = "https://sepolia.base.org"
+lasna = "https://lasna-rpc.rnk.dev/"

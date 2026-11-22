@@ -1,0 +1,24 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "Delivery Court demo seller that delivers",
+  "description": "Returns JSON that matches its declared output schema. Paid over x402 into the official auth-capture escrow, with the Delivery Court callback as operator. A Reactive contract pays it when the judged score is 70 or more. Testnet only (Base Sepolia).",
+  "endpoints": [
+    {
+      "name": "x402",
+      "endpoint": "https://delivery-court.fly.dev/deliver/resource",
+      "network": "eip155:84532",
+      "scheme": "auth-capture"
+    }
+  ],
+  "registrations": [
+    {
+      "agentId": 10798,
+      "agentRegistry": "eip155:84532:0x8004A818BFB912233c491871b3d84c89A494BD9e"
+    }
+  ],
+  "supportedTrust": [
+    "validation",
+    "reputation"
+  ],
+  "source": "https://github.com/kzmttkc/reactive-delivery-court"
+}

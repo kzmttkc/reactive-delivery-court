@@ -1,0 +1,83 @@
+{
+  "v": 3,
+  "model": "sha256:71d5a10978ed1106eceae249f3361f7018b718868fc3448881910ff454d90250",
+  "metadataModel": "sha256:efaddc9688c6099dc6b3061c422dc500596bf2812e4de6b725bb71a55958945d",
+  "contentModel": "sha256:ee63a99dfdba1770734a5a9f79a9eefad4777a9558d500b7257e0c8cf3d633e5",
+  "rule": "score = min(metadata score, content score), metadata score alone when there is no response",
+  "paymentId": "0xed51fb99683f3ef41188b4cfea5fd4c13e85c87ce523ffd6ef5c15ddb4045b29",
+  "status": 200,
+  "bodyBytes": 151,
+  "latencyMs": 2481,
+  "tag": "dc1:200:151:2481",
+  "bodySha256": "0xac8b5515e810d6f6a640bc90c527df94cd938dc746fffc8b65f5aebea6657291",
+  "bodyFile": "offchain/runs/responses/0xac8b5515e810d6f6a640bc90c527df94cd938dc746fffc8b65f5aebea6657291.body",
+  "outputSchemaDeclared": {
+    "type": "object",
+    "required": [
+      "network",
+      "blockNumber",
+      "blockTimestamp"
+    ],
+    "properties": {
+      "network": {
+        "type": "string"
+      },
+      "blockNumber": {
+        "type": "string"
+      },
+      "blockTimestamp": {
+        "type": "integer"
+      },
+      "baseFeePerGasWei": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "servedBy": {
+        "type": "string"
+      }
+    }
+  },
+  "score": 99,
+  "metadata": {
+    "score": 100,
+    "p": 0.999694,
+    "features": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0.502388,
+      1,
+      0.781682
+    ]
+  },
+  "content": {
+    "score": 99,
+    "p": 0.994424,
+    "features": [
+      0.502388,
+      0,
+      1,
+      1,
+      0,
+      0.358352,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0.61209,
+      0.119205,
+      0
+    ]
+  }
+}

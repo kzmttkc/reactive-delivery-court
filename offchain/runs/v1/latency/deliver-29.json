@@ -1,0 +1,177 @@
+{
+  "scene": "deliver",
+  "run": "deliver-29",
+  "startedAt": "2026-11-21T13:06:35.613Z",
+  "modelSha256": "71d5a10978ed1106eceae249f3361f7018b718868fc3448881910ff454d90250",
+  "paymentId": "0xd5576cbde9e98296e9f99a41b4d87076a42d419bc6a86390a59b3f6eba031eef",
+  "before": {
+    "buyerUsdc": "1700000",
+    "sellerUsdc": "300000",
+    "escrowStoreUsdc": "0",
+    "tokenStore": "0x9CCF603e34eF2E56129644175033651A6aE4C930"
+  },
+  "paymentResponse": {
+    "success": true,
+    "payer": "0xBd857a30e35bA99f8Edab20B41baA3A4272c154d",
+    "transaction": "0xc8fc8e934dd10de1c1f14221e0c0fbf8ae2e9c9ba2c7026cabf8552061eff5b0",
+    "network": "eip155:84532",
+    "amount": "10000"
+  },
+  "response": {
+    "status": 200,
+    "bodyBytes": 151,
+    "latencyMs": 2697,
+    "body": "{\"network\":\"eip155:84532\",\"blockNumber\":\"61722634\",\"blockTimestamp\":1795266395,\"baseFeePerGasWei\":\"5000000\",\"servedBy\":\"delivery-court seller-deliver\"}"
+  },
+  "authorizeTx": "0xc8fc8e934dd10de1c1f14221e0c0fbf8ae2e9c9ba2c7026cabf8552061eff5b0",
+  "authorizeBlock": "61722631",
+  "facilitatorSettle": [
+    "0xc8fc8e934dd10de1c1f14221e0c0fbf8ae2e9c9ba2c7026cabf8552061eff5b0"
+  ],
+  "whileHeld": {
+    "buyerUsdc": "1690000",
+    "sellerUsdc": "300000",
+    "escrowStoreUsdc": "10000",
+    "tokenStore": "0x9CCF603e34eF2E56129644175033651A6aE4C930"
+  },
+  "depositedReactTx": "0xa47a8e5e6af959c1d17c8e12656724698d252bbfdf34ede3038d09144cde6b7b",
+  "validationRequestTx": "0xa6de0c38a913d351ca8349db75e65660ad9f1f4a9a54d14b4da3226a610b3821",
+  "outputSchema": {
+    "type": "object",
+    "required": [
+      "network",
+      "blockNumber",
+      "blockTimestamp"
+    ],
+    "properties": {
+      "network": {
+        "type": "string"
+      },
+      "blockNumber": {
+        "type": "string"
+      },
+      "blockTimestamp": {
+        "type": "integer"
+      },
+      "baseFeePerGasWei": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "servedBy": {
+        "type": "string"
+      }
+    }
+  },
+  "judgment": {
+    "tx": "0xa9a548c7f74030dcf2c10b775701df4e4be8163a00da38c764231f60c6f1fb9a",
+    "status": "success",
+    "score": 99,
+    "bodySha256": "0xb5272c3199ac10786067d3de29a0052a10fd90da35c3ad5cf67ca1db7a0f0d38",
+    "responseURI": "offchain/runs/responses/0xd5576cbde9e98296e9f99a41b4d87076a42d419bc6a86390a59b3f6eba031eef.json",
+    "record": {
+      "v": 2,
+      "model": "sha256:71d5a10978ed1106eceae249f3361f7018b718868fc3448881910ff454d90250",
+      "metadataModel": "sha256:efaddc9688c6099dc6b3061c422dc500596bf2812e4de6b725bb71a55958945d",
+      "contentModel": "sha256:ee63a99dfdba1770734a5a9f79a9eefad4777a9558d500b7257e0c8cf3d633e5",
+      "rule": "score = min(metadata score, content score), metadata score alone when there is no response",
+      "paymentId": "0xd5576cbde9e98296e9f99a41b4d87076a42d419bc6a86390a59b3f6eba031eef",
+      "status": 200,
+      "bodyBytes": 151,
+      "bodySha256": "0xb5272c3199ac10786067d3de29a0052a10fd90da35c3ad5cf67ca1db7a0f0d38",
+      "bodyFile": "offchain/runs/responses/0xb5272c3199ac10786067d3de29a0052a10fd90da35c3ad5cf67ca1db7a0f0d38.body",
+      "outputSchemaDeclared": {
+        "type": "object",
+        "required": [
+          "network",
+          "blockNumber",
+          "blockTimestamp"
+        ],
+        "properties": {
+          "network": {
+            "type": "string"
+          },
+          "blockNumber": {
+            "type": "string"
+          },
+          "blockTimestamp": {
+            "type": "integer"
+          },
+          "baseFeePerGasWei": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "servedBy": {
+            "type": "string"
+          }
+        }
+      },
+      "score": 99,
+      "metadata": {
+        "score": 100,
+        "p": 0.999692,
+        "features": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0.502388,
+          1,
+          0.790027
+        ]
+      },
+      "content": {
+        "score": 99,
+        "p": 0.994406,
+        "features": [
+          0.502388,
+          0,
+          1,
+          1,
+          0,
+          0.358352,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0.614571,
+          0.119205,
+          0
+        ]
+      }
+    }
+  },
+  "decisionReactTx": "0x1a3f9df9c1ca8ac5a3fb6f1207422478bbf30ec379cb0b7ee511ab5a7dd043ab",
+  "decision": {
+    "capture": true,
+    "score": 99,
+    "reason": 0
+  },
+  "callbackTx": "0x152047585e8103926529f797fd2d4db509429f157b067fc0910c701636dfd9f2",
+  "callbackBlock": "61722654",
+  "resolved": {
+    "captured": true,
+    "amount": "10000",
+    "score": 99,
+    "reason": 0
+  },
+  "feedbackGiven": false,
+  "after": {
+    "buyerUsdc": "1690000",
+    "sellerUsdc": "310000",
+    "escrowStoreUsdc": "0",
+    "tokenStore": "0x9CCF603e34eF2E56129644175033651A6aE4C930"
+  },
+  "finishedAt": "2026-11-21T13:06:45.674Z"
+}

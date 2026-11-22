@@ -1,0 +1,13 @@
+{
+  "derivation": "role key = keccak256(deployer key || utf8('delivery-court:<role>')). Keys live outside this repo.",
+  "chain": "Base Sepolia (84532), Lasna (5318007) for the deployer",
+  "roles": {
+    "buyer": "0xBd857a30e35bA99f8Edab20B41baA3A4272c154d",
+    "seller-deliver": "0xF98F6b4D8f1a5A03271bBf2bee23236737D9EC31",
+    "seller-empty": "0x8Dba1A8aeD6Ab7F1e2037bfC295f3a0A00BE072F",
+    "seller-silent": "0x4151f916c1bd18dF1324Fa0Edd9F8Fa5bA8AD0F2",
+    "judge": "0x5eC4599A438fA0559aDe8b8551b369D5c5aDF0bC",
+    "relayer": "0xcECe20a6215ced9c36D8Fcf8929A3b0A71f911f1",
+    "deployer": "0x6db137549302E9b98abcB2a275b642f485895E2d"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "scene": "judge99",
+  "what": "The judge key writes 99 for an empty body (responseHash = sha256 of empty bytes, tag dc1:200:0:3000). The reactive contract re-scores the committed facts on chain: ScoreChecked(reported 99, onchain 0, final 0, guard 1), Decision(capture=false, score 0, reason 3 empty body hash), the callback voids and refunds the buyer.",
+  "paymentId": "0x2ba811bb0288161003b766018051105bc396620db61a6886a5fc258e33f8142a",
+  "authorizeTx": "0x7436f196057e1d22cba0e23273ba08fa3a0934df0f34ab24133ee3f64715b624",
+  "authorizeBlock": 61921332,
+  "validationRequestTx": "0xf47558cb43867b0418bf082953731b3e1c7cdcfe228d22aa22558178adc563f0",
+  "validationResponseTx": "0x6eb358f6f6034a73db554e9b60937eb3add0796af34dad7c22faeeeba463255e",
+  "judgeScore": 99,
+  "decisionReactTx": "0x1b343eccb0b96337a14c835b491eafd877beb8cbb50acf293184c5def6739b90",
+  "onchainScore": 0,
+  "finalScore": 0,
+  "reason": 3,
+  "callbackTx": "0xbc05ddb3c1a2ab64415974bee28550dda3eca6310184c67a14ff80f0e8b7b417",
+  "callbackBlock": 61921497,
+  "recordedAt": "2026-11-22T00:10:00Z"
+}

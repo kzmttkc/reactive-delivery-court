@@ -1,0 +1,20 @@
+{
+  "name": "delivery-court-offchain",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@x402/core": "^2.32.0",
+    "@x402/evm": "^2.32.0",
+    "@x402/express": "^2.32.0",
+    "@x402/extensions": "^2.32.0",
+    "@x402/fetch": "^2.32.0",
+    "express": "^5.3.0",
+    "viem": "^2.58.4"
+  },
+  "private": true
+}

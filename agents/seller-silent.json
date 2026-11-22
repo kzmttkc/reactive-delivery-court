@@ -1,0 +1,17 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "Delivery Court demo seller that never answers",
+  "description": "Takes the payment and never answers, on purpose, so the Reactive cron refunds the buyer after the deadline and writes a 'silent' ERC-8004 review. Run by the Delivery Court operator in offchain/src/run-scenes.mjs (not on the public server). Testnet only (Base Sepolia).",
+  "endpoints": [],
+  "registrations": [
+    {
+      "agentId": 10801,
+      "agentRegistry": "eip155:84532:0x8004A818BFB912233c491871b3d84c89A494BD9e"
+    }
+  ],
+  "supportedTrust": [
+    "validation",
+    "reputation"
+  ],
+  "source": "https://github.com/kzmttkc/reactive-delivery-court"
+}

@@ -1,0 +1,40 @@
+{
+  "scene": "silent",
+  "collectedFromChainAt": "2026-11-21T12:37:19.587Z",
+  "modelSha256": "efaddc9688c6099dc6b3061c422dc500596bf2812e4de6b725bb71a55958945d",
+  "paymentId": "0x862e9b7212f3aaa4d84328e61e16267146b2d4f268bd7e1d52a3da973d96eaeb",
+  "before": {
+    "buyerUsdc": "1990000",
+    "sellerUsdc": "0",
+    "escrowStoreUsdc": "0",
+    "tokenStore": "0x9CCF603e34eF2E56129644175033651A6aE4C930"
+  },
+  "authorizeTx": "0x0b5ed13d7f07eab218a6f956e0f37f917461c2a5bd994c11938049720e3141f2",
+  "whileHeld": {
+    "buyerUsdc": "1980000",
+    "sellerUsdc": "0",
+    "escrowStoreUsdc": "10000",
+    "tokenStore": "0x9CCF603e34eF2E56129644175033651A6aE4C930"
+  },
+  "depositedReactTx": "0x97334baf50583a6bddebff3108c4ce77f46c30d7d7abc2688162e73e0af598bb",
+  "decisionReactTx": "0x1b8443cfe4e0b3b7f959c2e138c86f86cba5e6798522dab3424712b84e9b3518",
+  "decision": {
+    "capture": false,
+    "score": 0,
+    "reason": 2
+  },
+  "callbackTx": "0xd3ce6b94d772640223bca9e4b2f67c8ec3c766aca0224166551cb22d3e826e76",
+  "resolved": {
+    "captured": false,
+    "amount": "10000",
+    "score": 0,
+    "reason": 2
+  },
+  "feedbackGiven": false,
+  "after": {
+    "buyerUsdc": "1990000",
+    "sellerUsdc": "0",
+    "escrowStoreUsdc": "0",
+    "tokenStore": "0x9CCF603e34eF2E56129644175033651A6aE4C930"
+  }
+}

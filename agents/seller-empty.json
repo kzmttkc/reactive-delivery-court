@@ -1,0 +1,24 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "Delivery Court demo seller that sends an empty answer",
+  "description": "Answers 200 OK with an empty body on purpose, so the court refunds the buyer and writes an ERC-8004 review. Run by the Delivery Court operator. Testnet only (Base Sepolia).",
+  "endpoints": [
+    {
+      "name": "x402",
+      "endpoint": "https://delivery-court.fly.dev/empty/resource",
+      "network": "eip155:84532",
+      "scheme": "auth-capture"
+    }
+  ],
+  "registrations": [
+    {
+      "agentId": 10799,
+      "agentRegistry": "eip155:84532:0x8004A818BFB912233c491871b3d84c89A494BD9e"
+    }
+  ],
+  "supportedTrust": [
+    "validation",
+    "reputation"
+  ],
+  "source": "https://github.com/kzmttkc/reactive-delivery-court"
+}

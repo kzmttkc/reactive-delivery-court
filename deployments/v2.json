@@ -1,0 +1,29 @@
+{
+  "note": "v2 deployment (2026-11-22). The reactive contract re-scores the judge's facts on chain (ScoreGuard + MetaNet) and takes min(judge, on-chain). Collect is bounded (registered sellers, 0.001 USDC minimum, expiry within 1 hour), the cron wraps, reputation only for silence or an empty body. v1 pair: deployments/stage3.json.",
+  "network": "eip155:84532",
+  "reactive": {
+    "chain": "Lasna (5318007)",
+    "address": "0x7FeF8eAF662CFb82adaa1cA3E45821A866cC4D51",
+    "validator": "0x5eC4599A438fA0559aDe8b8551b369D5c5aDF0bC",
+    "threshold": 70,
+    "deployTx": "0x9a95a0485d024b73e4cbe75de27897a40acc6fd1f013fb4b174ae8462c6b330c"
+  },
+  "callback": {
+    "chain": "Base Sepolia (84532)",
+    "address": "0xD80dfBa59a5930B943D0Eb5225E292B0ffB9D84a",
+    "deployTx": "0xb6a8bfbc65fc07f99004ce5fac9a58bb95a9b72428dc73f86d2d2fda92ff2f47"
+  },
+  "escrow": "0xf96815976523E00e65Be8f34cA5e64b4f41EB19c",
+  "tokenCollector": "0x8612dfdc421f80336cd14E8EF9cb1E765dB5ab88",
+  "usdc": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+  "identityRegistry": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
+  "reputationRegistry": "0x8004B663056A597Dffe9eCcC1965A193B7388713",
+  "validationRegistry": "0x8004Cb1BF31DAf7788923b405b754f57acEB4272",
+  "agents": {
+    "seller-deliver": 10798,
+    "seller-empty": 10799,
+    "seller-silent": 10801,
+    "seller-silent-registerTx": "0x5c987c07fc194843120cb662687958a6808929356d9bf7fb17e1b26e2517781e"
+  },
+  "version": 2
+}

@@ -1,0 +1,10 @@
+*
+!offchain/package.json
+!offchain/package-lock.json
+!offchain/src
+!offchain/public
+!model/judge.json
+!model/model.json
+!model/content_model.json
+!model/seller_schemas.json
+!deployments

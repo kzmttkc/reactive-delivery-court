@@ -1,0 +1,22 @@
+{
+  "deliver": {
+    "type": "object",
+    "required": ["network", "blockNumber", "blockTimestamp"],
+    "properties": {
+      "network": {"type": "string"},
+      "blockNumber": {"type": "string"},
+      "blockTimestamp": {"type": "integer"},
+      "baseFeePerGasWei": {"type": ["string", "null"]},
+      "servedBy": {"type": "string"}
+    }
+  },
+  "empty": {
+    "type": "object",
+    "required": ["network", "blockNumber", "blockTimestamp"],
+    "properties": {
+      "network": {"type": "string"},
+      "blockNumber": {"type": "string"},
+      "blockTimestamp": {"type": "integer"}
+    }
+  }
+}

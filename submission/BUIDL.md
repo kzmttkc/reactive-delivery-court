@@ -1,5 +1,7 @@
 # BUIDL draft (DoraHacks, Reactive Omni Buildathon)
 
+Paste from `## Name` only. Do not paste lines 1–4.
+
 Status: draft. Not submitted. Only the demo video URL is still `<TBD>`.
 Every number below is from a run in the repo. Contracts, scenes and latency are the v2 pair deployed on 2026-11-22 (JST). The v1 pair is in docs/HISTORY.md. Character counts are in CHECKLIST.md. Limit for all fields together: 4,000.
 
@@ -9,7 +11,7 @@ Delivery Court
 
 ## One-liner
 
-x402 pays before anyone looks. Delivery Court makes the money wait: a neural network judges the response, then Reactive pays the seller or refunds the buyer.
+x402 pays before anyone looks. On Base Sepolia testnet, Delivery Court holds USDC in escrow, a model judges the response, Reactive pays the seller or refunds the buyer.
 
 ## Track
 
@@ -30,33 +32,33 @@ https://github.com/kzmttkc/reactive-delivery-court
 
 ## Transaction hashes (full loop, origin event to callback)
 
-- Delivered, score 99, capture. Payment 0x3705f4307bfe8bf8477ff4dcce4cbe866ed3d44f76a64120e0187dd92f01cd5c, score 0xe85526853749719ce4d5190d41efc8db772842d13954f9b80aaad221f836f34a, react 0xb9ef16acdfa5f112c99e54039a2f80a47feeb52c992d6045e39b7a801dfeb7be, callback 0xb796e6e75349997d876a5c76353f4d003dde1b64637e88861b4314d283fbd465
+- Delivered, score 99, capture. Payment 0x3705f4307bfe8bf8477ff4dcce4cbe866ed3d44f76a64120e0187dd92f01cd5c, Deposited 0x9fa07f81…800afe, score 0xe85526853749719ce4d5190d41efc8db772842d13954f9b80aaad221f836f34a, react 0xb9ef16acdfa5f112c99e54039a2f80a47feeb52c992d6045e39b7a801dfeb7be, callback 0xb796e6e75349997d876a5c76353f4d003dde1b64637e88861b4314d283fbd465
 - Empty 200 OK, score 0, refund. Payment 0xeedd718ccda44227ba32e920b8af5885220c744b49bf2b83549f260a666393c0, score 0xb4b5934e68f7f0e8ae39b1b5d5027739e6b9821fa7f0f3a8d09b93660a591acd, react 0xfd1476da24fdc01e675f276b6a95bedb1b3caf04febd383020f01f50d6e723e0, callback 0xfc6d9aad7a91fa2d62bd2780dc5b4118cb05c86a17bf44c4d93555cd7224ae42
 - Silent seller, cron refund. Payment 0x8d56aefd4f4c5da8b80aaa7813d31468e8eec2f05dd7fb5736433dfce2600a51, cron react 0xf7f81584ceee2e3357050dd46ba0e4045ff583e26d6c151cb945ce707e26f3ad, callback 0xe4a424d02482f26c2f2c2dbe568a7bfb7cce76ace2e8217a4d645c321f830c76
 
 ## Description
 
 <!-- DESCRIPTION START -->
-vet402, my x402 buyer service, has paid sellers 15,128 times. 1,251 of those payments, about 1 in 12, never got a confirmed delivery. All settled anyway: x402 pays before anyone reads the response.
+vet402 has paid sellers 15,128 times (model/data/SOURCE.json 2026-11-21). 1,251 not delivered: 1,124 not_established (736 post-pay 4xx inconclusive per README) + 127 no_body_observed (~1 in 12). All settled anyway: x402 pays before anyone reads the response.
 
-The USDC goes into the official x402 auth-capture escrow. Two small neural networks read what came back. The lower score goes on chain (ERC-8004 validationResponse). A Reactive contract on Lasna reads it and calls back to Base Sepolia: 70 or more captures to the seller, below 70 voids to the buyer. No verdict by the deadline: a Reactive cron refunds the buyer. Silence and an empty body leave ERC-8004 feedback.
+USDC sits in the official x402 escrow. Two networks score the response (ERC-8004). Reactive on Lasna callbacks Base: 70+ capture, below 70 void. No verdict by deadline: cron refunds. Silence and empty body leave ERC-8004 feedback.
 
-### A 200 is not a delivery
+### When 200 OK still fails delivery
 
-The metadata network gives 100 to an error JSON, an HTML 502 page, JSON cut after 60 bytes and `{"ok":true}` against the declared schema. The content network gives each 0. Held-out test, 822 real bodies from 225 unseen hosts (657 are sellers' declared examples): accuracy 0.985. A "non-empty JSON" rule: 0.866.
+Four bad 200 answers in metrics.json demo_inputs score metadata 100, content 0. Held-out: 822 bodies, 225 hosts, accuracy 0.9854 (metrics.json, 2026-11-21). 657 declared (README). JSON rule: 0.8662.
 
 ### What only Reactive does here
 
 1. The judge never touches money. It only writes an ERC-8004 score, and its capture call reverts with NotAuthorized. Reactive turns the registry entry into a payment decision.
-2. Nobody has to show up. A permissionless settle() still needs someone awake with gas, and a silent seller writes nothing. The cron refunded that buyer 116 s after payment.
-3. Reactive re-scores the facts the judge commits (status, size, latency, body hash) and keeps the lower score, so the judge cannot score above its own facts. An empty body is 0 by its hash: the judge wrote 99 for one, Reactive made it 0 and refunded. False facts fail `node src/rejudge.mjs <score tx>`, which re-runs both networks on the public body.
+2. Nobody has to show up. A silent seller writes nothing. The cron refunded that buyer 116 s after payment. Cron resumes for judging (CHECKLIST). While paused, reclaim after the deadline refunds.
+3. Reactive re-scores judge facts and keeps the lower score. Empty body scores 0 (sha256 of zero bytes, judge-99: judge 99, on chain 0). Wrong tag: `node src/rejudge.mjs` exits 1. Base Sepolia + Lasna testnet only.
 
 ### Judging criteria
 
-1. Execution: three cases with origin, react and callback tx. Live: https://delivery-court.fly.dev, one click, every tx linked.
+1. Execution: three loops (README table, Deposited on deliver row). Live https://delivery-court.fly.dev deliver and empty buttons. Silent: hashes, /docket/, no third button. `cronPaused` until 2026-12-05 (CHECKLIST). Listed silent txs or resumed cron for Case 3.
 2. Integration: above. Without Reactive the score moves no money.
-3. Usefulness: refunds for non-delivery with no bot or person holding the money. Any registered x402 seller can join with one line (docs/SELLER.md). Next, vet402 adds it to its x402 facilitator: checks a seller before you pay, refunds you after.
-4. Craft: 123 Foundry tests (fuzzing, reentrancy, fork run), 26 off-chain tests with Python/JS model parity. https://delivery-court.fly.dev/docket/ rebuilds the whole docket from public RPCs only.
+3. Usefulness: empty and silent refund from escrow (116 s). Seller steps in docs/SELLER.md (owner registerSeller).
+4. Craft: 123 Foundry + 26 off-chain tests. https://delivery-court.fly.dev/docket/ from public RPCs only.
 
-Data: vet402 public record, in production, Aug 23 to Nov 21, snapshot in the repo.
+MIT app code. reactive-lib-omni SPDX UNLICENSED upstream. Data: vet402 public record Aug 23 to Nov 21 in repo.
 <!-- DESCRIPTION END -->

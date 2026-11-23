@@ -117,14 +117,14 @@ footer{margin-top:36px;font-size:.84rem;color:var(--mut)}
 </div>
 
 <h1>Pay first. If it never arrives, Reactive refunds you.</h1>
-<p class="lede">An x402 payment waits in escrow on Base Sepolia. A model scores what the seller sent, and a <strong>Reactive contract on Lasna pays the seller or returns the money</strong>. If the seller says nothing, a Reactive cron refunds the buyer at the deadline, with nobody online.</p>
+<p class="lede">An x402 payment waits in escrow on Base Sepolia. A model scores what the seller sent, and a <strong>Reactive contract on Lasna pays the seller or returns the money</strong>. The recorded silent run refunded the buyer 116 s after payment. The cron is paused until 2026-12-05 (deliver and empty still run here).</p>
 
 <section aria-labelledby="scenes-h">
   <h2 id="scenes-h" class="sr">Three ways a case ends</h2>
   <div class="scenes">
     <div class="scene"><h3>Seller delivers</h3><ol class="flow"><li><span class="chip">200 + JSON</span></li><li><span class="chip">score 99</span></li><li><span class="end ok">Paid to the seller</span></li></ol><a class="ex" target="_blank" rel="noopener" href="https://sepolia.basescan.org/tx/0xb796e6e75349997d876a5c76353f4d003dde1b64637e88861b4314d283fbd465">example tx ↗</a></div>
     <div class="scene"><h3>Empty answer</h3><ol class="flow"><li><span class="chip">200, 0 bytes</span></li><li><span class="chip">score 0</span></li><li><span class="end ng">Refunded</span></li></ol><a class="ex" target="_blank" rel="noopener" href="https://sepolia.basescan.org/tx/0xfc6d9aad7a91fa2d62bd2780dc5b4118cb05c86a17bf44c4d93555cd7224ae42">example tx ↗</a></div>
-    <div class="scene"><h3>Silence</h3><ol class="flow"><li><span class="chip">nothing</span></li><li><span class="chip">no score by the deadline</span></li><li><span class="end ng">Cron refunds</span></li></ol><a class="ex" target="_blank" rel="noopener" href="https://sepolia.basescan.org/tx/0xe4a424d02482f26c2f2c2dbe568a7bfb7cce76ace2e8217a4d645c321f830c76">example tx ↗</a></div>
+    <div class="scene"><h3>Silence</h3><ol class="flow"><li><span class="chip">nothing</span></li><li><span class="chip">no score by the deadline</span></li><li><span class="end ng">Cron refunds</span></li></ol><a class="ex" target="_blank" rel="noopener" href="https://sepolia.basescan.org/tx/0xe4a424d02482f26c2f2c2dbe568a7bfb7cce76ace2e8217a4d645c321f830c76">recorded 2026-11-21 · 0xe4a424d0…830c76 ↗</a></div>
   </div>
   <p class="cap">Pays at a score of 70 or more. The judge key only writes the score; the contracts move the money.</p>
 </section>

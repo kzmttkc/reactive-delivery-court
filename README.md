@@ -2,7 +2,7 @@
 
 **x402 pays before anyone looks. Delivery Court makes the money wait for a verdict.**
 
-vet402, my x402 buyer service, has paid sellers 15,128 times. About 1 in 12 of those payments never got a confirmed delivery, and every one settled anyway ([data](#delivery-model-model)). In Delivery Court the USDC sits in the official x402 escrow, a neural network judges what came back, and a Reactive contract pays the seller or refunds the buyer. If the seller goes silent, a Reactive cron refunds the buyer with nobody online. Nobody else can move the money: the judge key only writes a score, and the contracts decide.
+vet402, my x402 buyer service, has paid sellers 15,128 times (snapshot 2026-11-21). 1,251 are not labeled delivered: 1,124 not_established, 736 of those a 4xx vet402 calls inconclusive, plus 127 with no body (about 1 in 12), and every one settled anyway ([data](#delivery-model-model)). In Delivery Court the USDC sits in the official x402 escrow, a neural network judges what came back, and a Reactive contract pays the seller or refunds the buyer. The recorded silent run refunded the buyer 116 s after payment. The cron is paused until 2026-12-05 for fuel (CHECKLIST). Nobody else can move the money: the judge key only writes a score, and the contracts decide.
 
 `Reactive Omni Buildathon · Reactive Meets AI · Base Sepolia + Reactive Lasna (testnet only)`
 
@@ -17,7 +17,7 @@ vet402, my x402 buyer service, has paid sellers 15,128 times. About 1 in 12 of t
 | 3 Verdict | [0xb9ef16ac…feb7be](https://lasna.reactscan.net/tx/0xb9ef16acdfa5f112c99e54039a2f80a47feeb52c992d6045e39b7a801dfeb7be) Lasna decision react |
 | 4 Settlement | [0xb796e6e7…fbd465](https://sepolia.basescan.org/tx/0xb796e6e75349997d876a5c76353f4d003dde1b64637e88861b4314d283fbd465) Base capture callback |
 | Sourcify | [Callback 84532](https://sourcify.dev/server/v2/contract/84532/0xD80dfBa59a5930B943D0Eb5225E292B0ffB9D84a) · [Reactive 5318007](https://sourcify.dev/server/v2/contract/5318007/0x7FeF8eAF662CFb82adaa1cA3E45821A866cC4D51) |
-| Re-check a score | `cd offchain && node src/rejudge.mjs <score tx> <paymentId>` |
+| Re-check a score | `cd offchain && node src/rejudge.mjs <validationResponse tx> [...]` |
 | Judge cannot steal | `courtCapture` from judge `0x5eC4…F0bC` reverts `NotAuthorized` (eth_call, [below](#would-this-be-simpler-without-reactive)) |
 | Reactive MCP | `https://mcp.rnk.dev/mcp` read-only: `get_rc_health` / `list_subscriptions` on `0x7FeF…4D51` |
 
@@ -25,7 +25,7 @@ Inspect the live reactive contract with [Reactive MCP](https://blog.reactive.net
 
 ## Try it (30 seconds, no wallet)
 
-Open **https://delivery-court.fly.dev** and press a button. The server pays 0.01 test USDC and links every transaction as it confirms, then shows payment to settlement in block timestamps.
+Open **https://delivery-court.fly.dev** and press a button. The server pays 0.01 test USDC and links every transaction as it confirms, then shows payment to settlement in block timestamps. GET `/try/deliver` returns 404. Use POST. The page may show "cron paused". Deliver and empty still work. Cron must be on for new silent refunds.
 
 ```sh
 curl -sL -X POST https://delivery-court.fly.dev/try/deliver     # {"run":"<id>"}
@@ -34,7 +34,7 @@ curl -sL https://delivery-court.fly.dev/runs/<id>               # steps, score, 
 
 Pay with your own Base Sepolia wallet (0.01 USDC, no gas): `cd offchain && npm ci && BUYER_PRIVATE_KEY=0x... node src/pay.mjs https://delivery-court.fly.dev/empty/resource`. It pays with the official x402 client, signs what it received with the same key and posts it to `/judge`.
 
-Every case of the last 24 h, rebuilt in your browser from the public RPCs (nothing from this server): **https://delivery-court.fly.dev/docket/**. For sellers, the one-line integration: [docs/SELLER.md](docs/SELLER.md).
+Every case of the last 24 h, rebuilt in your browser from the public RPCs (nothing from this server): **https://delivery-court.fly.dev/docket/**. For sellers, the steps are in [docs/SELLER.md](docs/SELLER.md): captureAuthorizer, a body signature, an ERC-8004 validation request, and registerSeller by the court owner.
 
 ## Three cases, on chain
 
@@ -93,7 +93,7 @@ Every decision carries a reason, as the last value of the Lasna `Decision` log a
 | 2 | no score before the deadline (silent seller), voided on a cron tick | void | yes, to the agent the seller was registered with |
 | 3 | `responseHash` is the sha256 of an empty body, whatever the judge said | void | yes |
 | 4 | the `dc1` tag is missing or malformed | void | no |
-| 5 | `responseHash` is not empty but the tag says 0 bytes | void | no |
+| 5 | the tag says 0 bytes while `responseHash` is non-empty | void | no |
 | 6 | a score arrived after the deadline | void | no |
 | 7 | the callback re-read the ValidationRegistry before capture and it did not match | void (the callback switches to a refund) | no |
 
@@ -109,7 +109,7 @@ The final score is `min(judge score, on-chain score)`. The on-chain score is com
 
 ## Live server
 
-Limits of the live server: testnet only, one server-paid run at a time, 30 s apart, 40 a UTC day. It refuses a run before signing anything when a testnet balance is low (`/health` lists them). For a payment from your own wallet, the court scores the body you post, signed by the wallet that paid (EIP-191 over `delivery-court:judge:<paymentId>:0x<sha256(body)>:<status>`), so the record says `bodyReportedBy: buyer, posted to /judge`. `/judge` refuses payments made by the server's own buyer (the server judges those itself), unsigned or wrongly signed bodies, and more than 5 calls a minute per caller. Judgment records and bodies are served at `/responses/<file>` and the `responseURI` on chain is that full URL. Code: `offchain/src/server.mjs`, `offchain/public/index.html`, `Dockerfile`, `fly.toml`. The server holds the buyer, seller, judge and relayer testnet keys, never the deployer key. Runs on Fly until 2026-12-31.
+Limits of the live server: testnet only, one server-paid run at a time, 30 s apart, 40 a UTC day. It refuses a run before signing anything when a testnet balance is low (`/health` lists them). For a payment from your own wallet, the court scores the body you post, signed by the wallet that paid (EIP-191 over `delivery-court:judge:<paymentId>:0x<sha256(body)>:<status>`), so the record says `bodyReportedBy: buyer, posted to /judge`. `/judge` refuses payments made by the server's own buyer (the server judges those itself), unsigned or wrongly signed bodies, and more than 5 calls a minute per caller. Judgment records and bodies are served at `/responses/<file>` and the `responseURI` on chain is that full URL. Code: `offchain/src/server.mjs`, `offchain/public/index.html`, `Dockerfile`, `fly.toml`. The server holds the buyer, seller, judge and relayer testnet keys, never the deployer key. Runs on Fly through judging (owner-approved). Stop on 2027-01-01 per CHECKLIST and fly.toml.
 
 The live server runs on the v2 pair. Runs on 2026-11-22: the delivering seller scored 99 and captured, 8 s from payment to settlement, and the empty seller scored 0 and voided, 8 s from payment to settlement. The first runs on the v1 pair are in [docs/HISTORY.md](docs/HISTORY.md).
 
@@ -334,7 +334,7 @@ Held-out hosts, threshold 70, real rows and made-up rows apart:
 | Delivered: declared examples (657) | 647 | 10 |
 | Not delivered: 402 bodies and error pages (165) | 2 | 163 |
 
-Accuracy 0.985 (0.981 at threshold 50, 0.972 at 90).
+Accuracy 0.9854 on real held-out rows (model/metrics.json real_test, 2026-11-21). At threshold 50: 0.981. At threshold 90: 0.972.
 
 | Made-up rows of held-out hosts (657) | Scored capture | Scored void |
 |---|---|---|
@@ -380,7 +380,7 @@ Accuracy 1.000 at threshold 70, and the same at 50 and 90. Always guessing "deli
 
 - Metadata network: the label is vet402's own rule over the same signals (paid status and empty body), so its perfect score means the network learned that rule. That is why the content network exists.
 - Content network, positives: every delivered row is a seller's declared example, not a body observed after a real payment. Paid bodies on mainnet would need payments, which this project does not make. The 10 delivered examples scored void are mostly examples with empty result lists (`{"results":[]}`, `{"count":1,"items":[]}`) or a bare `{"ok":true}`. The network treats an empty result as no delivery, which can be wrong for a search that found nothing.
-- Content network, negatives: 45% of the rows are made up from templates in `model/content_data.py`. Their 0.997 shows the network learned those shapes. The real rows (0.985) are the better estimate.
+- Content network, negatives: 45% of the rows are made up from templates in `model/content_data.py`. Their 0.997 shows the network learned those shapes. The real rows (0.9854) are the better estimate.
 - A 402 body that carries a full preview (one host returns a schema.org article in its 402) scores 99. A seller that returns well-formed JSON with the right keys and useless values (for example stale or random numbers) scores as delivered. The network checks shape and type, not truth.
 - The schema check is a subset of JSON Schema: top-level type, required keys, property types, the first 5 array items. Nested schemas, formats, enums and patterns are not checked.
 - vet402 holds settled 4xx as inconclusive (the buyer may have sent a wrong request). The metadata network counts them as not delivered.
@@ -417,7 +417,7 @@ A Cron100 tick costs lREACT even when no payment is open, so the margin depends 
 Requirements: Foundry (tested with forge 1.8.3).
 
 ```sh
-git clone --recurse-submodules <this repo>
+git clone --recurse-submodules https://github.com/kzmttkc/reactive-delivery-court
 cd reactive-delivery-court
 forge build
 forge test

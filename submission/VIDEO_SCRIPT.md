@@ -3,7 +3,7 @@
 Adopted from the external audit of 2026-11-22. Changes since: the live page now prints payment to settlement in block timestamps after each run (use that number for the stopwatch in Case 1), and `node src/rejudge.mjs <score tx>` exists, so an optional 5 s insert after Case 2 can show `on-chain 0 / recomputed 0 / match`. Since the v2 pair (deployed 2026-11-22): every tx below is from v2, Case 3 says "Under two minutes" (the recorded silent refund took 116 s), and the heist row adds the judge-99 scene (VOICE_SCRIPT R08).
 
 Owner's own voice, no AI voice, subject "I" only. English narration. 1920x1080, 30 fps.
-Arc (起承転結): 起 = the empty answer I paid for, 承 = the court and two ordinary verdicts, 転 = the seller goes silent and I walk away, then I try to cheat my own court, 結 = one line and the URL.
+Arc in four parts: (1) the empty answer I paid for, (2) the court and two ordinary verdicts, (3) the seller goes silent and I walk away, then I try to cheat my own court, (4) one line and the URL.
 Every number on screen is from a repo file (sources at the bottom). Numbers measured on recording day (stopwatch block deltas) are read off the chain that day, not invented.
 
 ## Show moments (the three things a judge should remember)

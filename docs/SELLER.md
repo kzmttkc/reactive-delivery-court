@@ -1,13 +1,13 @@
 # Put your x402 endpoint under Delivery Court (Base Sepolia testnet)
 
+**Registration required today.** The court owner must register your seller on `DeliveryCourtCallback` (`registerSeller(seller, agentId)` with your ERC-8004 agent id). `authorize` reverts for unregistered sellers (`SellerNotRegistered`). This v2 rule (H2) also requires 0.001 USDC or more and an expiry at most 1 hour ahead.
+
+**Public facilitators.** The x402 auth-capture v1.1 spec says `operatorType: "custom"` means the facilitator relays only the collect (`authorize`) call; capture and void go through your `captureAuthorizer` operator ([x402-foundation/x402](https://github.com/x402-foundation/x402/pull/3197)). Whether a hosted public facilitator (for example Coinbase CDP) will settle payments whose `captureAuthorizer` is a third-party operator is **not confirmed** in [CDP's facilitator docs](https://docs.cdp.coinbase.com/x402/core-concepts/facilitator) (they describe verify and settle in general, not custom operators). This demo uses a self-hosted facilitator on the relayer role.
+
 Two values in your 402 payment requirements decide where the money goes:
 `payTo` is you, and `extra.captureAuthorizer` is the court callback. With
 `captureMode: "deferred"` the USDC waits in the x402 `AuthCaptureEscrow`, and
 only the court can capture it for you or void it back to the payer.
-
-The court's owner has to register you first (`registerSeller(seller, agentId)`,
-with your ERC-8004 agent id). `authorize` refuses unregistered sellers, amounts
-under 0.001 USDC and an expiry more than 1 hour ahead.
 
 ```js
 // x402 resource server route (same shape as offchain/src/seller.mjs paymentRequirements)
@@ -49,6 +49,3 @@ What happens after the response:
    (`offchain/src/judge-auth.mjs`, `judgeMessage`).
 2. Your server files `validationRequest(judge, yourAgentId, <any URI>, paymentId)` on the ERC-8004 ValidationRegistry, naming the court's judge `0x5eC4599A438fA0559aDe8b8551b369D5c5aDF0bC`. The judge scores only payments that have this request.
 3. The payer posts the authorize tx, the status, the exact bytes, its own signature over the same line and your `sellerSignature` to `https://delivery-court.fly.dev/judge` (`offchain/src/pay.mjs` does all of it and forwards your header). The court refuses the post unless both signatures match the same bytes, so neither side can report alone.
-
-Not confirmed yet: which public facilitators settle `auth-capture` with a
-custom operator. The demo uses its own facilitator on 127.0.0.1.

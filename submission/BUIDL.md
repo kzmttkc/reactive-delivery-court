@@ -1,6 +1,6 @@
 # BUIDL draft (DoraHacks, Reactive Omni Buildathon)
 
-Status: draft. Not submitted. Only the repository URL and the video URL are still `<TBD>`.
+Status: draft. Not submitted. Only the demo video URL is still `<TBD>`.
 Every number below is from a run in the repo. Contracts, scenes and latency are the v2 pair deployed on 2026-11-22 (JST). The v1 pair is in docs/HISTORY.md. Character counts are in CHECKLIST.md. Limit for all fields together: 4,000.
 
 ## Name
@@ -56,7 +56,7 @@ The metadata network gives 100 to an error JSON, an HTML 502 page, JSON cut afte
 1. Execution: three cases with origin, react and callback tx. Live: https://delivery-court.fly.dev, one click, every tx linked.
 2. Integration: above. Without Reactive the score moves no money.
 3. Usefulness: refunds for non-delivery with no bot or person holding the money. Any registered x402 seller can join with one line (docs/SELLER.md). Next, vet402 adds it to its x402 facilitator: checks a seller before you pay, refunds you after.
-4. Craft: 123 Foundry tests (fuzzing, reentrancy, fork run), 26 off-chain tests with Python/JS model parity.
+4. Craft: 123 Foundry tests (fuzzing, reentrancy, fork run), 26 off-chain tests with Python/JS model parity. https://delivery-court.fly.dev/docket/ rebuilds the whole docket from public RPCs only.
 
 Data: vet402 public record, in production, Aug 23 to Nov 21, snapshot in the repo.
 <!-- DESCRIPTION END -->

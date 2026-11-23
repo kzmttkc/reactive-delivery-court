@@ -6,6 +6,23 @@ vet402, my x402 buyer service, has paid sellers 15,128 times. About 1 in 12 of t
 
 `Reactive Omni Buildathon · Reactive Meets AI · Base Sepolia + Reactive Lasna (testnet only)`
 
+## 60-second judge quickstart
+
+| What | Where |
+|---|---|
+| Live try | https://delivery-court.fly.dev (`POST /try/deliver`) |
+| Docket (RPC only) | https://delivery-court.fly.dev/docket/ |
+| 1 Buyer pays | [0x3705f430…01cd5c](https://sepolia.basescan.org/tx/0x3705f4307bfe8bf8477ff4dcce4cbe866ed3d44f76a64120e0187dd92f01cd5c) Base Sepolia `authorize` |
+| 2 Case opens | [0x9fa07f81…800afe](https://lasna.reactscan.net/tx/0x9fa07f815b588156a53318309992f94f369a04a6b5fa42d31dd1fb8451800afe) Lasna `Deposited` react |
+| 3 Verdict | [0xb9ef16ac…feb7be](https://lasna.reactscan.net/tx/0xb9ef16acdfa5f112c99e54039a2f80a47feeb52c992d6045e39b7a801dfeb7be) Lasna decision react |
+| 4 Settlement | [0xb796e6e7…fbd465](https://sepolia.basescan.org/tx/0xb796e6e75349997d876a5c76353f4d003dde1b64637e88861b4314d283fbd465) Base capture callback |
+| Sourcify | [Callback 84532](https://sourcify.dev/server/v2/contract/84532/0xD80dfBa59a5930B943D0Eb5225E292B0ffB9D84a) · [Reactive 5318007](https://sourcify.dev/server/v2/contract/5318007/0x7FeF8eAF662CFb82adaa1cA3E45821A866cC4D51) |
+| Re-check a score | `cd offchain && node src/rejudge.mjs <score tx> <paymentId>` |
+| Judge cannot steal | `courtCapture` from judge `0x5eC4…F0bC` reverts `NotAuthorized` (eth_call, [below](#would-this-be-simpler-without-reactive)) |
+| Reactive MCP | `https://mcp.rnk.dev/mcp` read-only: `get_rc_health` / `list_subscriptions` on `0x7FeF…4D51` |
+
+Inspect the live reactive contract with [Reactive MCP](https://blog.reactive.network/reactive-mcp-live-diagnosis-for-reactive-contracts/) (public endpoint, no login): point Cursor or Claude at `https://mcp.rnk.dev/mcp` and call `get_rc_health` and `list_subscriptions` on `0x7FeF8eAF662CFb82adaa1cA3E45821A866cC4D51` on Lasna. On 2026-11-23: **OK_SUBSCRIBED** (Deposited + ValidationResponse filters active), **LOW_RESERVES** (likely) with Omni reserves 0 while the contract balance was 157.76 lREACT and `cronPaused` was true.
+
 ## Try it (30 seconds, no wallet)
 
 Open **https://delivery-court.fly.dev** and press a button. The server pays 0.01 test USDC and links every transaction as it confirms, then shows payment to settlement in block timestamps.
@@ -193,7 +210,7 @@ Registered sellers: seller-deliver (agent 10798), seller-empty (agent 10799), se
 
 The v1 pair, earlier pairs, the stage 0 manual judgment, the first metadata-only judge and every earlier setup transaction: [docs/HISTORY.md](docs/HISTORY.md).
 
-The callback source is verified on Sourcify with a match (creation and runtime): https://sourcify.dev/server/v2/contract/84532/0xD80dfBa59a5930B943D0Eb5225E292B0ffB9D84a . Blockscout shows it verified (`is_verified: true`).
+The callback source is verified on Sourcify with a match (creation and runtime): https://sourcify.dev/server/v2/contract/84532/0xD80dfBa59a5930B943D0Eb5225E292B0ffB9D84a . Blockscout shows it verified (`is_verified: true`). The reactive source is verified on Sourcify with a match (creation and runtime): https://sourcify.dev/server/v2/contract/5318007/0x7FeF8eAF662CFb82adaa1cA3E45821A866cC4D51 (verified 2026-11-23).
 
 ## Roles
 
@@ -393,7 +410,7 @@ The cron is paused while idle to save lREACT (`cronPaused` is true on the v2 rea
 3. `resumeCron` from the deployer (`script/Stage0.s.sol`, `resumeCron`, with the v2 reactive address `0x7FeF8eAF662CFb82adaa1cA3E45821A866cC4D51`).
 4. Run the watch on a schedule while the cron runs, for example every 30 minutes, and act on exit 1.
 
-A Cron100 tick costs lREACT even when no payment is open, so the margin depends on how long the cron runs before judging ends. The v1 measurements are in [docs/HISTORY.md](docs/HISTORY.md).
+A Cron100 tick costs lREACT even when no payment is open, so the margin depends on how long the cron runs before judging ends. On v2 Lasna, the balance drop across blocks 8931200 to 8931201 at the silent-scene cron react [0xf7f81584…26f3ad](https://lasna.reactscan.net/tx/0xf7f81584ceee2e3357050dd46ba0e4045ff583e26d6c151cb945ce707e26f3ad) was 0.014612 lREACT (that tick also voided the payment). With Cron100 about every 2 minutes that is about 10.5 lREACT a day if the cron stays on. An idle tick with no open payment was not isolated while `cronPaused` is true: on recording day, `resumeCron`, note `python3 scripts/watch-balances.py`, wait two Cron100 periods (~4 minutes) with no payments, divide the balance drop by 2. Budget through 2026-12-28: days from 2026-12-05 (resume cron for judging) × measured lREACT per day + 20% margin above 1.0 lREACT in `watch-balances.py` (top up from deployer lREACT or the Lasna faucet if low). The v1 measurements are in [docs/HISTORY.md](docs/HISTORY.md).
 
 ## Run the tests
 

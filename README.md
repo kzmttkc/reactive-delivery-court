@@ -6,6 +6,8 @@ vet402, my x402 buyer service, has paid sellers 15,128 times (snapshot 2026-11-2
 
 `Reactive Omni Buildathon · Reactive Meets AI · Base Sepolia + Reactive Lasna (testnet only)`
 
+▶ Demo video (2:37): https://youtu.be/qbV-FGWv2bU
+
 ## 60-second judge quickstart
 
 | What | Where |

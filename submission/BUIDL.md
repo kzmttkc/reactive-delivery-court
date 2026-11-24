@@ -2,7 +2,7 @@
 
 Paste from `## Name` only. Do not paste lines 1–4.
 
-Status: draft. Not submitted. Only the demo video URL is still `<TBD>`.
+Status: draft. Not submitted. The demo video is https://youtu.be/qbV-FGWv2bU (2:37).
 Every number below is from a run in the repo. Contracts, scenes and latency are the v2 pair deployed on 2026-11-22 (JST). The v1 pair is in docs/HISTORY.md. Character counts are in CHECKLIST.md. Limit for all fields together: 4,000.
 
 ## Name
@@ -23,7 +23,7 @@ https://github.com/kzmttkc/reactive-delivery-court
 
 ## Demo video
 
-<TBD: video URL, under 3:00>
+https://youtu.be/qbV-FGWv2bU
 
 ## Deployed contracts
 
